@@ -1,0 +1,11 @@
+    _____________________________________________________
+
+    Welcome to factvest!
+
+
+    With this tool you can get information on
+    various publicly traded securities.
+    _____________________________________________________
+
+    Lets get started.
+    _____________________________________________________

@@ -1,0 +1,13 @@
+
+    Which stocks would you like us to look up?
+    You can choose up to 100 stocks.
+
+    Below, provide a comma separated list of the
+    ticker symbols you'd like to look up.
+
+    For example, to choose Intel, Amazon, and Apple,
+    you would type the following. No spaces allowed!
+
+    ex: intc,amzn,aapl
+
+    -> 

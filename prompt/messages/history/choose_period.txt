@@ -1,0 +1,14 @@
+
+    How far back would you like to request data for?
+    Type the letter of the option you'd like to choose.
+
+    a.) "5 years"
+    b.) "2 years"
+    c.) "1 years"
+    d.) "Year to date"
+    e.) "6 months"
+    f.) "3 months"
+    g.) "1 month"
+    h.) "1 day"
+
+    -> 

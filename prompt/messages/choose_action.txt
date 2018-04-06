@@ -1,0 +1,17 @@
+
+    This app can perform a few different actions.
+    Choose which one you'd like.
+
+    A.) History:
+
+        Get historical price information
+
+    B.) Performance:
+
+        Get historical price performance
+
+    C.) Price:
+
+        Get the latest price for a security
+
+    -> 
