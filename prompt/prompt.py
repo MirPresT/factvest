@@ -1,6 +1,6 @@
 import json, os, time
 from money import money as m
-from modules import PriceHistory, Performance
+from modules import PriceHistory, Performance, Price
 
 class HistoryPrompt:
     def __init__(self):
@@ -62,7 +62,7 @@ class Prompt:
         self.ask_action(qs[2]) # what data should I grab
     def show_welcome(self, text):
         print(text)
-        time.sleep(4)
+        time.sleep(0.1)
     def ask_symbols(self, question):
         self.symbols = input(question).split(',')
     def ask_action(self, text):
@@ -70,15 +70,17 @@ class Prompt:
         option_actions = {
             'history': PriceHistory,
             'performance': Performance,
-            'price': lambda x: print('price.')
+            'price': Price
         }
 
         choice = answer_key[input(text).lower()]
 
         if choice == 'history':
             self.handle_history_action(option_actions[choice])
-        if choice == 'performance':
+        elif choice == 'performance':
             self.handle_performance_action(option_actions[choice])
+        elif choice == 'price':
+            self.handle_price_action(option_actions[choice])
     def handle_history_action(self, action):
         qs = self.subquestions['history']
         us = self.universal_qs
@@ -89,6 +91,10 @@ class Prompt:
 
         action(self.symbols, path, range)
     def handle_performance_action(self, action):
+        us = self.universal_qs
+        path = input(us[0])
+        action(self.symbols, path)
+    def handle_price_action(self, action):
         us = self.universal_qs
         path = input(us[0])
         action(self.symbols, path)
