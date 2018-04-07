@@ -62,7 +62,7 @@ class Prompt:
         self.ask_action(qs[2]) # what data should I grab
     def show_welcome(self, text):
         print(text)
-        time.sleep(0.1)
+        time.sleep(4)
     def ask_symbols(self, question):
         self.symbols = input(question).split(',')
     def ask_action(self, text):
