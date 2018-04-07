@@ -1,8 +1,8 @@
 import json, os, time
 from money import money as m
-from modules import PriceHistory
+from modules import PriceHistory, Performance
 
-class ActionPrompt:
+class HistoryPrompt:
     def __init__(self):
         pass
     def ask_range(self, txt):
@@ -17,9 +17,6 @@ class ActionPrompt:
             'h': '1d'
         }
         return answer_key[input(txt)]
-    def ask_path(self, txt):
-        return input(txt)
-
 
 class Prompt:
     def __init__(self):
@@ -72,7 +69,7 @@ class Prompt:
         answer_key = {'a': 'history', 'b': 'performance', 'c': 'price'}
         option_actions = {
             'history': PriceHistory,
-            'performance': lambda x: print('perf.'),
+            'performance': Performance,
             'price': lambda x: print('price.')
         }
 
@@ -80,12 +77,18 @@ class Prompt:
 
         if choice == 'history':
             self.handle_history_action(option_actions[choice])
+        if choice == 'performance':
+            self.handle_performance_action(option_actions[choice])
     def handle_history_action(self, action):
         qs = self.subquestions['history']
         us = self.universal_qs
-        AP = ActionPrompt()
+        Hp = HistoryPrompt()
 
-        range = AP.ask_range(qs[0])
-        path = AP.ask_path(us[0])
+        range = HP.ask_range(qs[0])
+        path = input(us[0])
 
         action(self.symbols, path, range)
+    def handle_performance_action(self, action):
+        us = self.universal_qs
+        path = input(us[0])
+        action(self.symbols, path)

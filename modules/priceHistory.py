@@ -107,6 +107,4 @@ class PriceHistory:
         for c in column_headers:
             worksheet.write(0, column_headers.index(c), c, header_format)
 
-        # custom_fun(workbook, writer, worksheet)
-
         return writer
