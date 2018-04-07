@@ -84,7 +84,7 @@ class Prompt:
     def handle_history_action(self, action):
         qs = self.subquestions['history']
         us = self.universal_qs
-        Hp = HistoryPrompt()
+        HP = HistoryPrompt()
 
         range = HP.ask_range(qs[0])
         path = input(us[0])
