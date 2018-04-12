@@ -11,7 +11,6 @@ class Price:
     def __init__(self, symbols, output_path):
         self.symbols = symbols
         self.output_path = output_path
-        response_data = self.save_data(self.request_data())
     def request_data(self):
         request = {
             'base_endpoint': 'stock',

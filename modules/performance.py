@@ -20,8 +20,8 @@ class Performance:
         request = {
             'base_endpoint': 'stock',
             'symbols': self.symbols,
-            'endpoints': ['stats'],
-            'other_options': {}
+            'endpoints': ['chart'],
+            'other_options': {'chartInterval': 1, 'range': '5y'}
         }
         return IEX.get_data(request)
     def save_data(self, response_data):
@@ -40,25 +40,21 @@ class Performance:
         )
         new_writer.save()
         print('\tDone saving file | {}'.format(file_name))
-    def create_df(self, all_data):
+    def create_df(self, response_data):
         index_column = []
         dataframe_data = []
-        columns = ['5 day chg', '1 month chg', '3 month chg', 'ytd chg', '1 year chg', '5 year chg']
+        columns = ['5 day chg']
 
-        for company in all_data:
+        for company in response_data:
+            trade_info = company['info']['chart']
+            recent_price = trade_info[len(trade_info) - 1]['close']
+
+            prior_trade_obj = trade_info[len(trade_info) - (5 + 1)]
+            prior_price = prior_trade_obj['close']
+            prior_date = prior_trade_obj['date']
+            perc_change = round(((recent_price / prior_price) - 1), 4)
             index_column.append(company['symbol'])
-            stats = company['info']['stats']
-
-            row = {
-                '5 year chg': stats['year5ChangePercent'],
-                '1 year chg': stats['year1ChangePercent'],
-                'ytd chg': stats['ytdChangePercent'],
-                '3 month chg': stats['month3ChangePercent'],
-                '1 month chg': stats['month1ChangePercent'],
-                '5 day chg': stats['day5ChangePercent']
-            }
-            dataframe_data.append(row)
-
+            dataframe_data.append({'5 day chg': perc_change})
         df = pd.DataFrame(data=dataframe_data, columns=columns, index=index_column)
         return df
     def format_csv(self, writer, columns, col_width, sheet_name, index_label):
