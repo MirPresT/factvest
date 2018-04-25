@@ -1,6 +1,6 @@
 import json, os, time
 from money import money as m
-from modules import PriceHistory, Performance, Price
+from modules import PriceHistory, Performance, Price, ReturnHistory
 
 class HistoryPrompt:
     def __init__(self):
@@ -66,35 +66,42 @@ class Prompt:
     def ask_symbols(self, question):
         self.symbols = input(question).split(',')
     def ask_action(self, text):
-        answer_key = {'a': 'history', 'b': 'performance', 'c': 'price'}
+        answer_key = {'a': 'price_history', 'b': 'summary_performance', 'c': 'return_history', 'd': 'last_price'}
+        choice = answer_key[input(text).lower()]
         option_actions = {
-            'history': PriceHistory,
-            'performance': Performance,
-            'price': Price
+            'price_history': PriceHistory,
+            'return_history': ReturnHistory,
+            'summary_performance': Performance,
+            'last_price': Price,
         }
 
-        choice = answer_key[input(text).lower()]
-
-        if choice == 'history':
-            self.handle_history_action(option_actions[choice])
-        elif choice == 'performance':
-            self.handle_performance_action(option_actions[choice])
-        elif choice == 'price':
-            self.handle_price_action(option_actions[choice])
-    def handle_history_action(self, action):
+        if choice == 'price_history':
+            self.handle_price_hist_act(option_actions[choice])
+        elif choice == 'summary_performance':
+            self.handle_perf_smry_act(option_actions[choice])
+        elif choice == 'return_history':
+            self.handle_rtrn_hist_act(option_actions[choice])
+        elif choice == 'last_price':
+            self.handle_price_act(option_actions[choice])
+    def handle_price_hist_act(self, action):
         qs = self.subquestions['history']
         us = self.universal_qs
         HP = HistoryPrompt()
-
         range = HP.ask_range(qs[0])
         path = input(us[0])
-
         action(self.symbols, path, range)
-    def handle_performance_action(self, action):
+    def handle_perf_smry_act(self, action):
         us = self.universal_qs
         path = input(us[0])
         action(self.symbols, path)
-    def handle_price_action(self, action):
+    def handle_price_act(self, action):
         us = self.universal_qs
         path = input(us[0])
         action(self.symbols, path)
+    def handle_rtrn_hist_act(self, action):
+        qs = self.subquestions['history']
+        us = self.universal_qs
+        HP = HistoryPrompt()
+        range = HP.ask_range(qs[0])
+        path = input(us[0])
+        action(self.symbols, path, range)

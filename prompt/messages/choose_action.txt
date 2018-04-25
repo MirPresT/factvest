@@ -2,16 +2,20 @@
     This app can perform a few different actions.
     Choose which one you'd like.
 
-    A.) History:
+    A.) Price History:
 
         Get historical price information
 
-    B.) Performance:
+    B.) Performance Summary:
 
-        Get historical price performance
+        Get summary of historical price performance
 
-    C.) Price:
+    C.) Daily Returns:
+
+        Get historical daily returns
+
+    D.) Last Price:
 
         Get the latest price for a security
 
-    -> 
+    ->

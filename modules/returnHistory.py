@@ -9,7 +9,7 @@ pandas.io.formats.excel.header_style = None
 
 IEX = IexApi()
 
-class PriceHistory:
+class ReturnHistory:
     def __init__(self, symbols, output_path, range='1y'):
         self.symbols = symbols
         self.range = range
@@ -33,17 +33,17 @@ class PriceHistory:
         relevant_data = []
         for security_obj in response_data:
             price_history = list(reversed(security_obj['info']['chart']))
-            prices = [day['close'] for day in price_history]
+            returns = [round(day['changePercent']/100, 4) for day in price_history]
             dates = [day['date'] for day in price_history]
-            relevant_data.append((security_obj['symbol'], {'prices': prices, 'dates': dates} ))
+            relevant_data.append((security_obj['symbol'], {'returns': returns, 'dates': dates} ))
 
         dataframe = self.build_df(relevant_data)
         self.save_to_excel(self.output_path, dataframe)
-    def build_df(self, all_prices):
+    def build_df(self, all_return_data):
 
-        columns = [symb for (symb, obj) in all_prices]
-        dates = [obj['dates'] for (symb, obj) in all_prices]
-        prices = [obj['prices'] for (symb, obj) in all_prices]
+        columns = [symb for (symb, obj) in all_return_data]
+        dates = [obj['dates'] for (symb, obj) in all_return_data]
+        returns = [obj['returns'] for (symb, obj) in all_return_data]
 
         date_lengths = [len(dates) for dates in dates]
         stck_w_lngst_hst = columns[date_lengths.index(max(date_lengths))]
@@ -51,10 +51,10 @@ class PriceHistory:
         # set the longest record of dates as the dates for the dataframe
         dates_for_df = dates[columns.index(stck_w_lngst_hst)]
 
-        short_hist_stocks = [columns[i] for i, p_list in enumerate(prices) if len(p_list) < lngst_hst_len]
+        short_hist_stocks = [columns[i] for i, p_list in enumerate(returns) if len(p_list) < lngst_hst_len]
         ok_stocks = [symb for symb in columns if symb not in short_hist_stocks]
-        short_hist_lists = [(columns.index(symb), prices[columns.index(symb)]) for symb in short_hist_stocks]
-        ok_hist_lists = [(columns.index(symb), prices[columns.index(symb)]) for symb in ok_stocks]
+        short_hist_lists = [(columns.index(symb), returns[columns.index(symb)]) for symb in short_hist_stocks]
+        ok_hist_lists = [(columns.index(symb), returns[columns.index(symb)]) for symb in ok_stocks]
 
         # Make sure all price lists have the same number of items in their arrays
         # Some arrays may be short due to IPO's during the requested time period
@@ -62,19 +62,19 @@ class PriceHistory:
         # The difference should be the amount of days to add dummy data or blank price data for
 
         for tpl in short_hist_lists:
-            prices[tpl[0]] = tpl[1] + [None for x in range(0, lngst_hst_len - len(tpl[1]))]
+            returns[tpl[0]] = tpl[1] + [None for x in range(0, lngst_hst_len - len(tpl[1]))]
 
         rows = []
-        for x, price in enumerate(prices[0]):
+        for x, price in enumerate(returns[0]):
             row = {}
             for i, stock in enumerate(columns):
-                row[stock] = prices[i][x]
+                row[stock] = returns[i][x]
             rows.append(row)
 
         return pd.DataFrame(data=rows, index=dates_for_df, columns=columns)
     def save_to_excel(self, file_loc, df):
         columns = list(df.columns.values)
-        file_name = '{}\\factvest_hist_price_data.xlsx'.format(file_loc)
+        file_name = '{}\\factvest_return_data.xlsx'.format(file_loc)
         writer = pd.ExcelWriter(file_name, engine='xlsxwriter')
         info = {
             'sheet_name': 'historical_data',
@@ -83,7 +83,7 @@ class PriceHistory:
         df.to_excel(writer, **info)
         new_writer = self.format_csv(writer, columns, 12.5, **info)
         new_writer.save()
-        print('\n\t -> Finished getting historical price data for your stocks!')
+        print('\n\t -> Finished getting historical return data for your stocks!')
     def format_csv(self, writer, columns, col_width, sheet_name, index_label):
         column_numbers = list(range(0,101))
         first_col = 0
@@ -104,7 +104,7 @@ class PriceHistory:
             'align': 'right',
             'valign': 'vcenter',
             'indent': 1,
-            'num_format': '0.00',
+            'num_format': '0.00%',
         })
         worksheet.set_row(0, 22.5)
         worksheet.set_column(first_col, last_col, col_width, data_format)

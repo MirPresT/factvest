@@ -1,6 +1,6 @@
 import pandas as pd
 import requests
-from .pretty_json import prettyJson as pj
+# from pretty_json import prettyJson as pj
 
 # Sample API Object
 sample_api_request = {

@@ -1,8 +1,10 @@
 import sys
 from decimal import Decimal as decimal
+# from .base import IexApi
 from .base import IexApi
-import pandas as pd, datetime as dt
 from .pretty_json import prettyJson as pj
+import pandas as pd, datetime as dt
+# from .pretty_json import prettyJson as pj
 
 import pandas.io.formats.excel
 pandas.io.formats.excel.header_style = None
